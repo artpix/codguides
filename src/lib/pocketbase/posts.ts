@@ -5,11 +5,13 @@ import { createPocketBase } from './client';
 export async function getPosts(client: PocketBase = createPocketBase()) {
 	return client.collection<Post>('posts').getFullList({
 		sort: '-date_created',
+		expand: 'og_image,source',
 	});
 }
 
 export async function getPost(slug: string, client: PocketBase = createPocketBase()) {
 	return client.collection<Post>('posts').getFirstListItem(
 		client.filter('slug = {:slug}', { slug }),
+		{ expand: 'og_image,source' },
 	);
 }
