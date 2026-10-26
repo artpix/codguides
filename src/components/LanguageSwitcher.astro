@@ -1,0 +1,56 @@
+---
+import { getLocalizedPath, type Locale, locales, useTranslations } from '../i18n';
+
+interface Props {
+	locale: Locale;
+	path?: string;
+}
+
+const { locale, path = '' } = Astro.props;
+const t = useTranslations(locale);
+const languageNames: Record<Locale, string> = {
+	ru: 'Русский',
+	en: 'English',
+	de: 'Deutsch',
+};
+---
+
+<nav aria-label={t('language.label')}>
+	<span>{t('language.label')}:</span>
+	{
+		locales.map((item) => (
+			<a
+				href={getLocalizedPath(item, path)}
+				hreflang={item}
+				lang={item}
+				aria-current={item === locale ? 'page' : undefined}
+			>
+				{languageNames[item]}
+			</a>
+		))
+	}
+</nav>
+
+<style>
+	nav {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem;
+		max-width: 48rem;
+		margin: 0 auto;
+		padding: 1rem 1.25rem;
+		font-size: 0.9rem;
+	}
+
+	a {
+		color: #5145cd;
+		text-decoration: none;
+	}
+
+	a[aria-current='page'] {
+		font-weight: 700;
+		text-decoration: underline;
+		text-underline-offset: 0.2rem;
+	}
+</style>

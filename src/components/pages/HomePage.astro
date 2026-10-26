@@ -1,0 +1,32 @@
+---
+import type { Locale } from '../../i18n';
+import { getLocalizedPath, useTranslations } from '../../i18n';
+import Layout from '../../layouts/Layout.astro';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<Layout title={t('site.title')} locale={locale}>
+	<main>
+		<h1>{t('site.title')}</h1>
+		<p>{t('home.description')}</p>
+		<a href={getLocalizedPath(locale, 'posts')}>{t('home.openPosts')}</a>
+	</main>
+</Layout>
+
+<style>
+	main {
+		max-width: 48rem;
+		margin: 0 auto;
+		padding: 3rem 1.25rem;
+	}
+
+	a {
+		color: #5145cd;
+	}
+</style>

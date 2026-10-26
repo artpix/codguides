@@ -1,0 +1,61 @@
+---
+import PostList from '../posts/PostList.astro';
+import type { Locale } from '../../i18n';
+import { getLocalizedPath, useTranslations } from '../../i18n';
+import Layout from '../../layouts/Layout.astro';
+import { getPosts } from '../../lib/pocketbase/posts';
+import type { Post } from '../../types/pocketbase';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+let posts: Post[] = [];
+let loadError = false;
+
+try {
+	posts = await getPosts();
+} catch (error) {
+	loadError = true;
+	console.warn(
+		`PocketBase недоступен: ${error instanceof Error ? error.message : 'неизвестная ошибка'}`,
+	);
+}
+---
+
+<Layout title={t('posts.title')} locale={locale} path="posts">
+	<main>
+		<a href={getLocalizedPath(locale)}>← {t('posts.backHome')}</a>
+		<h1>{t('posts.title')}</h1>
+
+		{
+			loadError ? (
+				<p class="error">{t('posts.loadError')}</p>
+			) : (
+				<PostList posts={posts} emptyText={t('posts.empty')} />
+			)
+		}
+	</main>
+</Layout>
+
+<style>
+	main {
+		max-width: 48rem;
+		margin: 0 auto;
+		padding: 3rem 1.25rem;
+	}
+
+	a {
+		color: #5145cd;
+	}
+
+	.error {
+		padding: 1.25rem;
+		border: 1px solid #e6a5a5;
+		border-radius: 0.75rem;
+		background: #fff1f1;
+		color: #782626;
+	}
+</style>
