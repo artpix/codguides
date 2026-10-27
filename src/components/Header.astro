@@ -1,0 +1,32 @@
+---
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import { getLocalizedPath, useTranslations, type Locale } from '@/i18n';
+
+interface Props {
+	locale: Locale;
+	path?: string;
+	localizedPaths?: Partial<Record<Locale, string>>;
+}
+
+const { locale, path = '', localizedPaths } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<header>
+	<div class="header-inner">
+		<a class="brand" href={getLocalizedPath(locale)}>{t('site.title')}</a>
+		<nav aria-label={t('nav.main')}>
+			<a href={getLocalizedPath(locale)}>{t('nav.home')}</a>
+			<a href={getLocalizedPath(locale, 'posts')}>{t('home.allPosts')}</a>
+		</nav>
+		<LanguageSwitcher {locale} {path} {localizedPaths} />
+	</div>
+</header>
+
+<style>
+	header { border-bottom: 1px solid #d9dce3; }
+	.header-inner { max-width: 90rem; margin: 0 auto; padding: 1rem 1.25rem; display: flex; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+	.brand { font-size: 1.5rem; font-weight: bold; }
+	nav { display: flex; flex-wrap: wrap; gap: 1rem; }
+	a { color: inherit; }
+</style>

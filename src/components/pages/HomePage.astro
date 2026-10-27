@@ -3,6 +3,7 @@ import type { Locale } from '@/i18n';
 import { getLocalizedPath, useTranslations } from '@/i18n';
 import Layout from '@/layouts/Layout.astro';
 import LatestPosts from '@/components/posts/LatestPosts.astro';
+import ToolsAndNews from '@/components/home/ToolsAndNews.astro';
 import { getHomePosts } from '@/lib/pocketbase/posts';
 import type { LocalizedPost } from '@/types/pocketbase';
 
@@ -28,11 +29,14 @@ try {
 		<p>{t('home.description')}</p>
 		<a href={getLocalizedPath(locale, 'posts')}>{t('home.openPosts')}</a>
 		<LatestPosts {posts} {locale} {loadError} />
+		<ToolsAndNews {locale} />
 	</main>
 </Layout>
 
 <style>
 	main {
+		--home-columns: minmax(0, 2.3fr) minmax(0, 1fr) minmax(0, 1fr);
+		--home-gap: 1.5rem;
 		max-width: 90rem;
 		margin: 0 auto;
 		padding: 3rem 1.25rem;

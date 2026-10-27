@@ -1,5 +1,6 @@
 ---
 import Layout from '@/layouts/Layout.astro';
+import PostTags from '@/components/posts/PostTags.astro';
 import { getLocalizedPath, useTranslations, type Locale } from '@/i18n';
 import { createPocketBase } from '@/lib/pocketbase/client';
 import type { LocalizedPost } from '@/types/pocketbase';
@@ -26,6 +27,7 @@ const imageUrl = ogImage?.file
 		<a href={getLocalizedPath(locale, 'posts')}>← Все записи</a>
 		<article>
 			<header>
+				<PostTags tags={post.expand?.tags} {locale} />
 				<h1>{translation.title}</h1>
 				{translation.seo_description && <p>{translation.seo_description}</p>}
 			</header>

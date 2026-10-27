@@ -1,0 +1,26 @@
+---
+import type { Locale } from '@/i18n';
+import type { Tag } from '@/types/pocketbase';
+
+interface Props {
+	tags?: Tag[];
+	locale: Locale;
+}
+
+const { tags = [], locale } = Astro.props;
+const labels = tags.map((tag) => ({
+	name: tag[`name_${locale}`]?.trim() || tag.name_ru?.trim() || tag.name_en?.trim() || tag.name_de?.trim(),
+	color: tag.color,
+})).filter((tag) => tag.name);
+---
+
+{labels.length > 0 && (
+	<ul class="post-tags">
+		{labels.map((tag) => <li style={{ borderColor: tag.color || undefined }}>{tag.name}</li>)}
+	</ul>
+)}
+
+<style>
+	.post-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; list-style: none; padding: 0; margin: 0.5rem 0; }
+	li { border: 1px solid currentColor; padding: 0.2rem 0.5rem; font-size: 0.875rem; }
+</style>

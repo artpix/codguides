@@ -29,7 +29,15 @@ export interface Sources extends RecordModel {
 /**
  * Посты
  */
+export interface Tag extends RecordModel {
+	color: string;
+	name_ru: string;
+	name_en: string;
+	name_de: string;
+}
+
 export interface Post extends RecordModel {
+	tags: string[];
 	is_featured: boolean;
 	title: string;
 	slug: string;
@@ -43,6 +51,7 @@ export interface Post extends RecordModel {
 	date_updated: string;
 	expand?: {
 		og_image?: Media;
+		tags?: Tag[];
 		source?: Sources;
 	};
 }

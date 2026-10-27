@@ -3,6 +3,7 @@ import type { LocalizedPost } from '@/types/pocketbase';
 import { createPocketBase } from '@/lib/pocketbase/client';
 import type { Locale } from '@/i18n';
 import { getPostPath } from '@/lib/paths';
+import PostTags from '@/components/posts/PostTags.astro';
 
 interface Props {
 	post: LocalizedPost;
@@ -20,6 +21,7 @@ const imageUrl = ogImage?.file
 ---
 
 <article class="post-card">
+	<PostTags tags={post.expand?.tags} {locale} />
 	<h2><a href={getPostPath(locale, translation.slug)}>{translation.title}</a></h2>
 	<p>{translation.seo_description}</p>
 	{source?.url && <a href={source.url}>{sourceLabel}</a>}

@@ -22,7 +22,7 @@ export async function getPostLanguagePaths(postId: string, client: PocketBase = 
 }
 
 const translationsCollection = 'posts_translations';
-const expand = 'languages_code,post_id.og_image,post_id.source';
+const expand = 'languages_code,post_id.og_image,post_id.source,post_id.tags';
 function normalizeLanguageCode(code: string): string {
 	return code.trim().toLowerCase().split(/[-_]/)[0];
 }
@@ -50,6 +50,14 @@ export async function getPosts(locale: Locale, client: PocketBase = createPocket
 export async function getHomePosts(locale: Locale, client: PocketBase = createPocketBase()) {
 	const posts = await getPosts(locale, client);
 	return posts.filter((post) => post.is_featured === true).slice(0, 5);
+}
+
+/** Latest published news, independent of the homepage featured selection. */
+export async function getNewsPosts(locale: Locale, client: PocketBase = createPocketBase()) {
+	const posts = await getPosts(locale, client);
+	return posts.filter((post) => post.expand?.tags?.some(
+		(tag) => tag.name_ru?.trim().toLowerCase() === 'новости',
+	)).slice(0, 3);
 }
 
 export async function getPost(slug: string, locale: Locale, client: PocketBase = createPocketBase()) {

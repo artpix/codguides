@@ -1,0 +1,86 @@
+---
+import { useTranslations, type Locale } from '@/i18n';
+import { getNewsPosts } from '@/lib/pocketbase/posts';
+import { getPostPath } from '@/lib/paths';
+import type { LocalizedPost } from '@/types/pocketbase';
+
+interface Props {
+	locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const tools = ['speedups', 'resources', 'troops'] as const;
+let news: LocalizedPost[] = [];
+let newsError = false;
+try {
+	news = await getNewsPosts(locale);
+} catch (error) {
+	newsError = true;
+	console.warn('Failed to load news:', error instanceof Error ? error.message : error);
+}
+const dateFormatter = new Intl.DateTimeFormat(locale, {
+	day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC',
+});
+---
+
+<div class="tools-and-news">
+	<section aria-labelledby="tools-title">
+		<h2 id="tools-title">{t('home.toolsTitle')}</h2>
+		<div class="tools-grid">
+			{tools.map((tool) => (
+				<article>
+					<h3>{t(`home.tools.${tool}.title`)}</h3>
+					<p>{t(`home.tools.${tool}.description`)}</p>
+				</article>
+			))}
+		</div>
+	</section>
+	<section aria-labelledby="news-title">
+		<h2 id="news-title">{t('home.newsTitle')}</h2>
+		{newsError ? <p role="status">{t('posts.loadError')}</p> : news.length ? (
+			<ul class="news-list">
+				{news.map((post) => {
+					const date = new Date(post.date_created);
+					return (
+						<li>
+							{!Number.isNaN(date.getTime()) && <time datetime={date.toISOString()}>{dateFormatter.format(date)}</time>}
+							<a href={getPostPath(locale, post.translation.slug)}>{post.translation.title}</a>
+						</li>
+					);
+				})}
+			</ul>
+		) : <p>{t('home.noNews')}</p>}
+	</section>
+</div>
+
+<style>
+	.tools-and-news {
+		display: grid;
+		grid-template-columns: var(--home-columns);
+		gap: var(--home-gap);
+		margin-top: 3rem;
+	}
+	section { min-width: 0; }
+	section:first-child { grid-column: span 2; }
+	h2 { margin: 0 0 1.25rem; font-size: 2rem; }
+	.tools-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1.5rem;
+	}
+	article { padding: 1rem; border: 1px solid #d9dce3; }
+	h3 { margin: 0 0 0.75rem; font-size: 1.25rem; }
+	p { margin: 0; line-height: 1.5; }
+	.news-list { display: grid; gap: 1rem; list-style: none; margin: 0; padding: 0; }
+	.news-list li { display: grid; gap: 0.25rem; }
+	.news-list a { color: inherit; line-height: 1.5; }
+	time { font-size: 0.875rem; }
+	@media (max-width: 900px) {
+		.tools-and-news { grid-template-columns: minmax(0, 1fr); }
+		section:first-child { grid-column: auto; }
+	}
+	@media (max-width: 640px) {
+		.tools-grid { grid-template-columns: minmax(0, 1fr); }
+	}
+</style>
