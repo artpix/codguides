@@ -49,12 +49,24 @@ export interface Post extends RecordModel {
 /**
  * Переводы постов
  */
-export interface PostTranslations extends RecordModel {
+export type PostLanguageCode = 'ru-RU' | 'de-DE' | 'en-US';
+
+export interface PostTranslation extends RecordModel {
+	/** ID записи из коллекции languages. */
 	languages_code: string;
 	post_id: string;
 	title: string;
-	description: string;
+	slug: string;
 	seo_title: string;
 	seo_description: string;
 	content: string;
+	expand?: {
+		post_id?: Post;
+		languages_code?: RecordModel & { code: PostLanguageCode };
+	};
+}
+
+/** Пост с переводом на запрошенный язык. */
+export interface LocalizedPost extends Post {
+	translation: PostTranslation;
 }
