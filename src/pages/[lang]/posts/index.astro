@@ -1,6 +1,6 @@
 ---
-import PostsPage from '../../../components/pages/PostsPage.astro';
-import type { Locale } from '../../../i18n';
+import PostsPage from '@/components/pages/PostsPage.astro';
+import type { Locale } from '@/i18n';
 
 export function getStaticPaths() {
 	return [{ params: { lang: 'en' } }, { params: { lang: 'de' } }];

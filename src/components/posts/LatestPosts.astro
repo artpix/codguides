@@ -1,0 +1,38 @@
+---
+import { getLocalizedPath, useTranslations, type Locale } from '@/i18n';
+import type { LocalizedPost } from '@/types/pocketbase';
+import HomePostCard from '@/components/posts/HomePostCard.astro';
+
+interface Props {
+	posts: LocalizedPost[];
+	locale: Locale;
+	loadError?: boolean;
+}
+
+const { posts, locale, loadError = false } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<section aria-labelledby="latest-posts-title">
+	<header>
+		<h2 id="latest-posts-title">{t('home.latestPosts')}</h2>
+		<a href={getLocalizedPath(locale, 'posts')}>{t('home.allPosts')} <span aria-hidden="true">→</span></a>
+	</header>
+	{loadError ? <p role="status">{t('posts.loadError')}</p> : posts.length ? (
+		<div class="posts-grid">
+			{posts.map((post, index) => <HomePostCard {post} {locale} featured={index === 0} />)}
+		</div>
+	) : <p>{t('home.noPosts')}</p>}
+</section>
+
+<style>
+	header { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+	h2 { margin: 0; font-size: 2rem; }
+	header a { flex-shrink: 0; }
+	.posts-grid { display: grid; grid-template-columns: 2.3fr 1fr 1fr; gap: 1.5rem; }
+	@media (max-width: 900px) { .posts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+	@media (max-width: 560px) {
+		.posts-grid { grid-template-columns: minmax(0, 1fr); }
+		header { align-items: flex-start; flex-direction: column; }
+	}
+</style>

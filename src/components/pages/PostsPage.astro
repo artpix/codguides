@@ -1,10 +1,10 @@
 ---
-import PostList from '../posts/PostList.astro';
-import type { Locale } from '../../i18n';
-import { getLocalizedPath, useTranslations } from '../../i18n';
-import Layout from '../../layouts/Layout.astro';
-import { getPosts } from '../../lib/pocketbase/posts';
-import type { LocalizedPost } from '../../types/pocketbase';
+import PostList from '@/components/posts/PostList.astro';
+import type { Locale } from '@/i18n';
+import { getLocalizedPath, useTranslations } from '@/i18n';
+import Layout from '@/layouts/Layout.astro';
+import { getPosts } from '@/lib/pocketbase/posts';
+import type { LocalizedPost } from '@/types/pocketbase';
 
 interface Props {
 	locale: Locale;
@@ -34,7 +34,7 @@ try {
 			loadError ? (
 				<p class="error">{t('posts.loadError')}</p>
 			) : (
-				<PostList posts={posts} emptyText={t('posts.empty')} />
+				<PostList posts={posts} {locale} emptyText={t('posts.empty')} />
 			)
 		}
 	</main>

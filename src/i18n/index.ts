@@ -1,8 +1,16 @@
+import type { Locale } from '@/i18n/locales';
+export { locales, type Locale } from '@/i18n/locales';
+
 const ru = {
 	'site.title': 'Codguides',
+	'home.latestPosts': 'Последние статьи',
+	'home.allPosts': 'Все статьи',
+	'home.noPosts': 'Пока нет статей для главной.',
 	'home.description': 'Проект на Astro с данными из PocketBase.',
 	'home.openPosts': 'Посмотреть записи',
 	'posts.title': 'Записи',
+	'post.backToPosts': '??? ??????',
+	'post.source': '????????',
 	'posts.backHome': 'На главную',
 	'posts.empty': 'В коллекции пока нет записей.',
 	'posts.loadError':
@@ -12,16 +20,19 @@ const ru = {
 
 type TranslationKey = keyof typeof ru;
 
-export const locales = ['ru', 'en', 'de'] as const;
-export type Locale = (typeof locales)[number];
 
 const translations: Record<Locale, Record<TranslationKey, string>> = {
 	ru,
 	en: {
 		'site.title': 'Codguides',
+		'home.latestPosts': 'Latest articles',
+		'home.allPosts': 'All articles',
+		'home.noPosts': 'No articles selected for the homepage yet.',
 		'home.description': 'An Astro project powered by PocketBase data.',
 		'home.openPosts': 'View posts',
 		'posts.title': 'Posts',
+		'post.backToPosts': 'All posts',
+		'post.source': 'Source',
 		'posts.backHome': 'Back to home',
 		'posts.empty': 'There are no posts in the collection yet.',
 		'posts.loadError':
@@ -30,9 +41,14 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
 	},
 	de: {
 		'site.title': 'Codguides',
+		'home.latestPosts': 'Neueste Artikel',
+		'home.allPosts': 'Alle Artikel',
+		'home.noPosts': 'Noch keine Artikel für die Startseite ausgewählt.',
 		'home.description': 'Ein Astro-Projekt mit Daten aus PocketBase.',
 		'home.openPosts': 'Beiträge ansehen',
 		'posts.title': 'Beiträge',
+		'post.backToPosts': 'Alle Beitr?ge',
+		'post.source': 'Quelle',
 		'posts.backHome': 'Zur Startseite',
 		'posts.empty': 'Die Sammlung enthält noch keine Beiträge.',
 		'posts.loadError':
@@ -45,9 +61,4 @@ export function useTranslations(locale: Locale) {
 	return (key: TranslationKey) => translations[locale][key];
 }
 
-export function getLocalizedPath(locale: Locale, path = '') {
-	const cleanPath = path.replace(/^\/+|\/+$/g, '');
-	const localePrefix = locale === 'ru' ? '' : `/${locale}`;
-
-	return `${localePrefix}/${cleanPath}`.replace(/\/$/, '') || '/';
-}
+export { getPath as getLocalizedPath } from '@/lib/paths';

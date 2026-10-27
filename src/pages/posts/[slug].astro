@@ -1,0 +1,22 @@
+---
+import type { GetStaticPaths } from 'astro';
+import PostPage from '@/components/pages/PostPage.astro';
+import { getPosts } from '@/lib/pocketbase/posts';
+import type { LocalizedPost } from '@/types/pocketbase';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts('ru');
+  return posts.map((post) => ({
+    params: { slug: post.translation.slug },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: LocalizedPost;
+}
+
+const { post } = Astro.props;
+---
+
+<PostPage {post} locale="ru" />

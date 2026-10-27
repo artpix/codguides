@@ -1,14 +1,16 @@
 ---
-import LanguageSwitcher from '../components/LanguageSwitcher.astro';
-import { getLocalizedPath, locales, type Locale } from '../i18n';
+import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
+import { getLocalizedPath, locales, type Locale } from '@/i18n';
 
 interface Props {
 	title?: string;
 	locale?: Locale;
 	path?: string;
+	localizedPaths?: Partial<Record<Locale, string>>;
 }
 
-const { title = 'Codguides', locale = 'ru', path = '' } = Astro.props;
+const { title = 'Codguides', locale = 'ru', path = '', localizedPaths } = Astro.props;
+const languagePaths = localizedPaths ?? Object.fromEntries(locales.map((item) => [item, getLocalizedPath(item, path)])) as Partial<Record<Locale, string>>;
 ---
 
 <!doctype html>
@@ -21,14 +23,14 @@ const { title = 'Codguides', locale = 'ru', path = '' } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		{
-			locales.map((item) => (
-				<link rel="alternate" hreflang={item} href={getLocalizedPath(item, path)} />
+			locales.filter((item) => languagePaths[item]).map((item) => (
+				<link rel="alternate" hreflang={item} href={languagePaths[item]} />
 			))
 		}
-		<link rel="alternate" hreflang="x-default" href={getLocalizedPath('ru', path)} />
+		{languagePaths.ru && <link rel="alternate" hreflang="x-default" href={languagePaths.ru} />}
 	</head>
 	<body>
-		<LanguageSwitcher locale={locale} path={path} />
+		<LanguageSwitcher locale={locale} path={path} localizedPaths={languagePaths} />
 		<slot />
 	</body>
 </html>

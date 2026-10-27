@@ -1,0 +1,29 @@
+---
+import type { GetStaticPaths } from 'astro';
+import PostPage from '@/components/pages/PostPage.astro';
+import { locales, type Locale } from '@/i18n';
+import { getPosts } from '@/lib/pocketbase/posts';
+import type { LocalizedPost } from '@/types/pocketbase';
+
+export const getStaticPaths = (async () => {
+  const paths = await Promise.all(
+    locales.filter((locale) => locale !== 'ru').map(async (locale) => {
+      const posts = await getPosts(locale);
+      return posts.map((post) => ({
+        params: { lang: locale, slug: post.translation.slug },
+        props: { post, locale },
+      }));
+    }),
+  );
+  return paths.flat();
+}) satisfies GetStaticPaths;
+
+interface Props {
+  post: LocalizedPost;
+  locale: Locale;
+}
+
+const { post, locale } = Astro.props;
+---
+
+<PostPage {post} {locale} />

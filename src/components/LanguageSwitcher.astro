@@ -1,12 +1,13 @@
 ---
-import { getLocalizedPath, type Locale, locales, useTranslations } from '../i18n';
+import { getLocalizedPath, type Locale, locales, useTranslations } from '@/i18n';
 
 interface Props {
 	locale: Locale;
 	path?: string;
+	localizedPaths?: Partial<Record<Locale, string>>;
 }
 
-const { locale, path = '' } = Astro.props;
+const { locale, path = '', localizedPaths } = Astro.props;
 const t = useTranslations(locale);
 const languageNames: Record<Locale, string> = {
 	ru: 'Русский',
@@ -18,9 +19,9 @@ const languageNames: Record<Locale, string> = {
 <nav aria-label={t('language.label')}>
 	<span>{t('language.label')}:</span>
 	{
-		locales.map((item) => (
+		locales.filter((item) => !localizedPaths || localizedPaths[item]).map((item) => (
 			<a
-				href={getLocalizedPath(item, path)}
+				href={localizedPaths ? localizedPaths[item] : getLocalizedPath(item, path)}
 				hreflang={item}
 				lang={item}
 				aria-current={item === locale ? 'page' : undefined}

@@ -30,6 +30,7 @@ export interface Sources extends RecordModel {
  * Посты
  */
 export interface Post extends RecordModel {
+	is_featured: boolean;
 	title: string;
 	slug: string;
 	description: string;

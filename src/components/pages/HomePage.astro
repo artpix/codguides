@@ -1,7 +1,10 @@
 ---
-import type { Locale } from '../../i18n';
-import { getLocalizedPath, useTranslations } from '../../i18n';
-import Layout from '../../layouts/Layout.astro';
+import type { Locale } from '@/i18n';
+import { getLocalizedPath, useTranslations } from '@/i18n';
+import Layout from '@/layouts/Layout.astro';
+import LatestPosts from '@/components/posts/LatestPosts.astro';
+import { getHomePosts } from '@/lib/pocketbase/posts';
+import type { LocalizedPost } from '@/types/pocketbase';
 
 interface Props {
 	locale: Locale;
@@ -9,6 +12,14 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
+let posts: LocalizedPost[] = [];
+let loadError = false;
+try {
+	posts = await getHomePosts(locale);
+} catch (error) {
+	loadError = true;
+	console.warn('Failed to load homepage posts:', error instanceof Error ? error.message : error);
+}
 ---
 
 <Layout title={t('site.title')} locale={locale}>
@@ -16,15 +27,17 @@ const t = useTranslations(locale);
 		<h1>{t('site.title')}</h1>
 		<p>{t('home.description')}</p>
 		<a href={getLocalizedPath(locale, 'posts')}>{t('home.openPosts')}</a>
+		<LatestPosts {posts} {locale} {loadError} />
 	</main>
 </Layout>
 
 <style>
 	main {
-		max-width: 48rem;
+		max-width: 90rem;
 		margin: 0 auto;
 		padding: 3rem 1.25rem;
 	}
+	main > :global(section) { margin-top: 3rem; }
 
 	a {
 		color: #5145cd;

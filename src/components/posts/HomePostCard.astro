@@ -1,0 +1,64 @@
+---
+import type { Locale } from '@/i18n';
+import type { LocalizedPost } from '@/types/pocketbase';
+import { getPostPath } from '@/lib/paths';
+import { createPocketBase } from '@/lib/pocketbase/client';
+
+interface Props {
+	post: LocalizedPost;
+	locale: Locale;
+	featured?: boolean;
+}
+
+const { post, locale, featured = false } = Astro.props;
+const { translation } = post;
+const image = post.expand?.og_image;
+const imageUrl = image?.file ? createPocketBase().files.getURL(image, image.file) : undefined;
+const date = new Date(post.date_created);
+const validDate = !Number.isNaN(date.getTime());
+const dateLabel = validDate
+	? new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(date)
+	: undefined;
+---
+
+<article class:list={['home-post', { featured }]}>
+	<a class="card-link" href={getPostPath(locale, translation.slug)}>
+		<div class="media">
+			{imageUrl && <img src={imageUrl} alt={image?.alt || ''} loading={featured ? 'eager' : 'lazy'} />}
+		</div>
+		<div class="body">
+			<div>
+				{validDate && <time datetime={date.toISOString()}>{dateLabel}</time>}
+				<h3>{translation.title}</h3>
+				{translation.seo_description && <p>{translation.seo_description}</p>}
+			</div>
+			<span class="arrow" aria-hidden="true">→</span>
+		</div>
+	</a>
+</article>
+
+<style>
+	.home-post { min-width: 0; }
+	.card-link { display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; }
+	.media { aspect-ratio: 2.5; background: #eee; overflow: hidden; }
+	img { display: block; width: 100%; height: 100%; object-fit: cover; }
+	.body { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0; }
+	.body > div { flex: 1; min-width: 0; }
+	h3 { margin: 0.4rem 0; font-size: 1.25rem; }
+	p { margin: 0; line-height: 1.5; }
+	time { font-size: 0.875rem; }
+	.arrow { flex-shrink: 0; font-size: 1.5rem; }
+	.featured { grid-row: span 2; }
+	.featured .card-link { position: relative; min-height: 30rem; }
+	.featured .media { position: absolute; inset: 0; aspect-ratio: auto; }
+	.featured .body { position: relative; margin-top: auto; padding: 1.5rem; background: rgb(255 255 255 / 90%); }
+	.featured h3 { font-size: 2rem; }
+	@media (max-width: 900px) {
+		.featured { grid-row: auto; grid-column: 1 / -1; }
+	}
+	@media (max-width: 560px) {
+		.featured .card-link { min-height: 24rem; }
+		.featured .body { padding: 1rem; }
+		.featured h3 { font-size: 1.5rem; }
+	}
+</style>

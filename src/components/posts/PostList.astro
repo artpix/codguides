@@ -1,19 +1,21 @@
 ---
-import type { LocalizedPost } from '../../types/pocketbase';
-import PostCard from './PostCard.astro';
+import type { LocalizedPost } from '@/types/pocketbase';
+import PostCard from '@/components/posts/PostCard.astro';
+import type { Locale } from '@/i18n';
 
 interface Props {
 	posts: LocalizedPost[];
+	locale: Locale;
 	emptyText: string;
 }
 
-const { posts, emptyText } = Astro.props;
+const { posts, locale, emptyText } = Astro.props;
 ---
 
 {
 	posts.length > 0 ? (
 		<div class="post-list">
-			{posts.map((post) => <PostCard post={post} />)}
+			{posts.map((post) => <PostCard post={post} {locale} />)}
 		</div>
 	) : (
 		<p class="empty">{emptyText}</p>
