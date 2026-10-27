@@ -5,7 +5,7 @@ import type { RecordModel } from 'pocketbase';
  */
 export interface Media extends RecordModel {
 	file?: string;
-	title?: string;
+	name?: string;
 	alt?: string;
 	folder?: string;
 }
