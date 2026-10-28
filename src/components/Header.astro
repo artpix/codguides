@@ -13,7 +13,7 @@ const t = useTranslations(locale);
 ---
 
 <header>
-	<div class="header-inner">
+	<div class="header-inner site-container">
 		<a class="brand" href={getLocalizedPath(locale)}>{t('site.title')}</a>
 		<nav aria-label={t('nav.main')}>
 			<a href={getLocalizedPath(locale)}>{t('nav.home')}</a>
@@ -25,7 +25,7 @@ const t = useTranslations(locale);
 
 <style>
 	header { border-bottom: 1px solid #d9dce3; }
-	.header-inner { max-width: 90rem; margin: 0 auto; padding: 1rem 1.25rem; display: flex; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+	.header-inner { padding-block: 1rem; display: flex; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
 	.brand { font-size: 1.5rem; font-weight: bold; }
 	nav { display: flex; flex-wrap: wrap; gap: 1rem; }
 	a { color: inherit; }

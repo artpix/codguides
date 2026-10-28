@@ -26,36 +26,46 @@ try {
 ---
 
 <Layout title={t('posts.title')} locale={locale} path="posts">
-	<main>
-		<a href={getLocalizedPath(locale)}>← {t('posts.backHome')}</a>
+	<header class="page-header">
+		<a class="back-link" href={getLocalizedPath(locale)}><span aria-hidden="true">←</span> {t('posts.backHome')}</a>
 		<h1>{t('posts.title')}</h1>
+	</header>
 
-		{
-			loadError ? (
-				<p class="error">{t('posts.loadError')}</p>
-			) : (
-				<PostList posts={posts} {locale} emptyText={t('posts.empty')} />
-			)
-		}
-	</main>
+	{
+		loadError ? (
+			<p class="error" role="status">{t('posts.loadError')}</p>
+		) : (
+			<PostList posts={posts} {locale} emptyText={t('posts.empty')} />
+		)
+	}
 </Layout>
 
 <style>
-	main {
-		max-width: 48rem;
-		margin: 0 auto;
-		padding: 3rem 1.25rem;
+	.page-header {
+		margin-bottom: 2rem;
 	}
 
-	a {
-		color: #5145cd;
+	h1 {
+		margin: 1.25rem 0 0;
+		font-size: clamp(2rem, 5vw, 3rem);
+		line-height: 1.15;
+	}
+
+	.back-link {
+		color: inherit;
+		text-underline-offset: 0.2em;
+		line-height: 1.5;
+	}
+
+	.back-link:focus-visible {
+		outline: 2px solid currentColor;
+		outline-offset: 4px;
 	}
 
 	.error {
 		padding: 1.25rem;
-		border: 1px solid #e6a5a5;
-		border-radius: 0.75rem;
-		background: #fff1f1;
-		color: #782626;
+		margin: 0;
+		border: 1px solid #d9dce3;
+		line-height: 1.6;
 	}
 </style>

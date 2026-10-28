@@ -1,7 +1,7 @@
 ---
 import type { LocalizedPost } from '@/types/pocketbase';
 import PostCard from '@/components/posts/PostCard.astro';
-import type { Locale } from '@/i18n';
+import { useTranslations, type Locale } from '@/i18n';
 
 interface Props {
 	posts: LocalizedPost[];
@@ -10,28 +10,94 @@ interface Props {
 }
 
 const { posts, locale, emptyText } = Astro.props;
+const t = useTranslations(locale);
+const tags = Array.from(new Map(posts.flatMap((post) => post.expand?.tags ?? [])
+	.map((tag) => [tag.id, {
+		id: tag.id,
+		name: tag[`name_${locale}`]?.trim() || tag.name_ru?.trim() || tag.name_en?.trim() || tag.name_de?.trim(),
+	}])).values()).filter((tag) => tag.name)
+	.sort((a, b) => a.name!.localeCompare(b.name!, locale));
 ---
 
+<post-filter>
 {
 	posts.length > 0 ? (
-		<div class="post-list">
-			{posts.map((post) => <PostCard post={post} {locale} />)}
-		</div>
+		<>
+		{tags.length > 0 && (
+			<div class="filters" role="group" aria-label={t('posts.filterTags')} hidden data-filters>
+				<button type="button" data-tag="" aria-pressed="true">{t('posts.allTags')}</button>
+				{tags.map((tag) => <button type="button" data-tag={tag.id} aria-pressed="false">{tag.name}</button>)}
+			</div>
+		)}
+		<p class="result-count" role="status" aria-live="polite" aria-atomic="true" hidden data-result>
+			{t('posts.shown')} <span data-count>{posts.length}</span>
+		</p>
+		<ul class="post-list" role="list">
+			{posts.map((post) => <li data-post-tags={JSON.stringify((post.expand?.tags ?? []).map((tag) => tag.id))}><PostCard post={post} {locale} /></li>)}
+		</ul>
+		</>
 	) : (
-		<p class="empty">{emptyText}</p>
+		<p class="empty" role="status">{emptyText}</p>
 	)
 }
+</post-filter>
+
+<script>
+	class PostFilter extends HTMLElement {
+		connectedCallback() {
+			if (this.dataset.initialized) return;
+			this.dataset.initialized = 'true';
+			const filters = this.querySelector<HTMLElement>('[data-filters]');
+			if (!filters) return;
+			const buttons = Array.from(filters.querySelectorAll<HTMLButtonElement>('button[data-tag]'));
+			const posts = Array.from(this.querySelectorAll<HTMLLIElement>('[data-post-tags]'))
+				.map((element) => ({ element, tags: JSON.parse(element.dataset.postTags ?? '[]') as string[] }));
+			const result = this.querySelector<HTMLElement>('[data-result]');
+			const count = this.querySelector<HTMLElement>('[data-count]');
+			filters.hidden = false;
+			if (result) result.hidden = false;
+			buttons.forEach((button) => button.addEventListener('click', () => {
+				const tag = button.dataset.tag ?? '';
+				let visible = 0;
+				posts.forEach(({ element, tags }) => {
+					element.hidden = tag !== '' && !tags.includes(tag);
+					if (!element.hidden) visible++;
+				});
+				buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+				if (count) count.textContent = String(visible);
+			}));
+		}
+	}
+	if (!customElements.get('post-filter')) customElements.define('post-filter', PostFilter);
+</script>
 
 <style>
+	post-filter { display: block; }
+	[hidden] { display: none !important; }
+	.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+	button { padding: 0.5rem 0.875rem; border: 1px solid #d9dce3; background: #fff; color: inherit; font: inherit; cursor: pointer; }
+	button:hover { border-color: currentColor; }
+	button[aria-pressed='true'] { background: #202124; border-color: #202124; color: #fff; }
+	button:focus-visible { outline: 2px solid #202124; outline-offset: 3px; }
+	.result-count { margin: 0 0 1.5rem; color: #555b63; font-size: 0.875rem; }
 	.post-list {
 		display: grid;
-		gap: 1rem;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+		gap: 1.5rem;
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	li {
+		display: flex;
+		min-width: 0;
 	}
 
 	.empty {
 		padding: 1.25rem;
-		border-radius: 0.75rem;
-		background: #eef1f7;
-		color: #4d5567;
+		margin: 0;
+		border: 1px solid #d9dce3;
+		line-height: 1.6;
 	}
 </style>

@@ -11,7 +11,7 @@ const year = new Date().getUTCFullYear();
 ---
 
 <footer>
-	<div class="footer-inner">
+	<div class="footer-inner site-container">
 		<p>© {year} {t('site.title')}</p>
 		<nav aria-label={t('nav.footer')}>
 			<a href={getLocalizedPath(locale)}>{t('nav.home')}</a>
@@ -22,7 +22,7 @@ const year = new Date().getUTCFullYear();
 
 <style>
 	footer { border-top: 1px solid #d9dce3; }
-	.footer-inner { max-width: 90rem; margin: 0 auto; padding: 1.5rem 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+	.footer-inner { padding-block: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
 	p { margin: 0; }
 	nav { display: flex; flex-wrap: wrap; gap: 1rem; }
 	a { color: inherit; }

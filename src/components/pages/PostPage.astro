@@ -1,6 +1,5 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import PostTags from '@/components/posts/PostTags.astro';
 import { getLocalizedPath, useTranslations, type Locale } from '@/i18n';
 import { createPocketBase } from '@/lib/pocketbase/client';
 import type { LocalizedPost } from '@/types/pocketbase';
@@ -22,33 +21,23 @@ const imageUrl = ogImage?.file
 	: undefined;
 ---
 
-<Layout title={translation.seo_title || translation.title} locale={locale} {localizedPaths}>
-	<main>
-		<a href={getLocalizedPath(locale, 'posts')}>← Все записи</a>
-		<article>
-			<header>
-				<PostTags tags={post.expand?.tags} {locale} />
-				<h1>{translation.title}</h1>
-				{translation.seo_description && <p>{translation.seo_description}</p>}
-			</header>
-			{imageUrl && <img class="cover" src={imageUrl} alt={ogImage?.alt || translation.title} />}
-			{/* HTML из редактора PocketBase; доступ к редактированию должен быть у доверенных авторов. */}
-			<div class="content" set:html={translation.content} />
-			{source?.url && (
-				<footer>Источник: <a href={source.url}>{source.name || source.url}</a></footer>
-			)}
-		</article>
-	</main>
+<Layout title={translation.seo_title || translation.title} description={translation.seo_description} width="reading" locale={locale} {localizedPaths}>
+	<a href={getLocalizedPath(locale, 'posts')}>← Все записи</a>
+	<article>
+		<header>
+			<h1>{translation.title}</h1>
+			{translation.seo_description && <p>{translation.seo_description}</p>}
+		</header>
+		{imageUrl && <img class="cover" src={imageUrl} alt={ogImage?.alt || translation.title} />}
+		{/* HTML из редактора PocketBase; доступ к редактированию должен быть у доверенных авторов. */}
+		<div class="content" set:html={translation.content} />
+		{source?.url && (
+			<footer>Источник: <a href={source.url}>{source.name || source.url}</a></footer>
+		)}
+	</article>
 </Layout>
 
 <style>
-	main {
-		max-width: 48rem;
-		margin: 0 auto;
-		padding: 3rem 1.25rem;
-		overflow-wrap: anywhere;
-	}
-
 	a,
 	.content :global(a) {
 		color: #5145cd;

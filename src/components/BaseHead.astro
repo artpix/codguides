@@ -1,0 +1,23 @@
+---
+import { locales, type Locale } from '@/i18n';
+
+interface Props {
+	title: string;
+	description?: string;
+	localizedPaths: Partial<Record<Locale, string>>;
+}
+
+const { title, description, localizedPaths } = Astro.props;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" />
+<meta name="generator" content={Astro.generator} />
+<title>{title}</title>
+{description && <meta name="description" content={description} />}
+{locales.filter((locale) => localizedPaths[locale]).map((locale) => (
+	<link rel="alternate" hreflang={locale} href={localizedPaths[locale]} />
+))}
+{localizedPaths.ru && <link rel="alternate" hreflang="x-default" href={localizedPaths.ru} />}

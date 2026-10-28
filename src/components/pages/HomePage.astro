@@ -24,24 +24,21 @@ try {
 ---
 
 <Layout title={t('site.title')} locale={locale}>
-	<main>
+	<div class="home-content">
 		<h1>{t('site.title')}</h1>
 		<p>{t('home.description')}</p>
 		<a href={getLocalizedPath(locale, 'posts')}>{t('home.openPosts')}</a>
 		<LatestPosts {posts} {locale} {loadError} />
 		<ToolsAndNews {locale} />
-	</main>
+	</div>
 </Layout>
 
 <style>
-	main {
+	.home-content {
 		--home-columns: minmax(0, 2.3fr) minmax(0, 1fr) minmax(0, 1fr);
 		--home-gap: 1.5rem;
-		max-width: 90rem;
-		margin: 0 auto;
-		padding: 3rem 1.25rem;
 	}
-	main > :global(section) { margin-top: 3rem; }
+	.home-content > :global(section) { margin-top: 3rem; }
 
 	a {
 		color: #5145cd;
