@@ -1,4 +1,5 @@
 ---
+import { ArrowLeft } from '@lucide/astro';
 import Layout from '@/layouts/Layout.astro';
 import { getLocalizedPath, useTranslations, type Locale } from '@/i18n';
 import { createPocketBase } from '@/lib/pocketbase/client';
@@ -22,7 +23,7 @@ const imageUrl = ogImage?.file
 ---
 
 <Layout title={translation.seo_title || translation.title} description={translation.seo_description} width="reading" locale={locale} {localizedPaths}>
-	<a href={getLocalizedPath(locale, 'posts')}>← Все записи</a>
+	<a href={getLocalizedPath(locale, 'posts')}><ArrowLeft size={16} aria-hidden="true" /> Все записи</a>
 	<article>
 		<header>
 			<h1>{translation.title}</h1>

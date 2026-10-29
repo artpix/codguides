@@ -1,9 +1,9 @@
 ---
+import { ArrowRight } from '@lucide/astro';
 import type { Locale } from '@/i18n';
 import type { LocalizedPost } from '@/types/pocketbase';
 import { getPostPath } from '@/lib/paths';
 import { createPocketBase } from '@/lib/pocketbase/client';
-import PostTags from '@/components/posts/PostTags.astro';
 
 interface Props {
 	post: LocalizedPost;
@@ -29,38 +29,48 @@ const dateLabel = validDate
 		</div>
 		<div class="body">
 			<div>
-				<PostTags tags={post.expand?.tags} {locale} />
 				{validDate && <time datetime={date.toISOString()}>{dateLabel}</time>}
 				<h3>{translation.title}</h3>
 				{translation.seo_description && <p>{translation.seo_description}</p>}
 			</div>
-			<span class="arrow" aria-hidden="true">→</span>
+			<span class="arrow-circle"><ArrowRight size={18} aria-hidden="true" /></span>
 		</div>
 	</a>
 </article>
 
 <style>
-	.home-post { min-width: 0; }
-	.card-link { display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; }
-	.media { aspect-ratio: 2.5; background: #eee; overflow: hidden; }
-	img { display: block; width: 100%; height: 100%; object-fit: cover; }
-	.body { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0; }
-	.body > div { flex: 1; min-width: 0; }
-	h3 { margin: 0.4rem 0; font-size: 1.25rem; }
-	p { margin: 0; line-height: 1.5; }
-	time { font-size: 0.875rem; }
-	.arrow { flex-shrink: 0; font-size: 1.5rem; }
-	.featured { grid-row: span 2; }
-	.featured .card-link { position: relative; min-height: 30rem; }
-	.featured .media { position: absolute; inset: 0; aspect-ratio: auto; }
-	.featured .body { position: relative; margin-top: auto; padding: 1.5rem; background: rgb(255 255 255 / 90%); }
-	.featured h3 { font-size: 2rem; }
-	@media (max-width: 900px) {
-		.featured { grid-row: auto; grid-column: 1 / -1; }
-	}
-	@media (max-width: 560px) {
-		.featured .card-link { min-height: 24rem; }
-		.featured .body { padding: 1rem; }
-		.featured h3 { font-size: 1.5rem; }
-	}
+
+.home-post { min-width: 0; }
+.card-link { display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; }
+.media { position: relative; aspect-ratio: 2.7; background: #e0e2e5; overflow: hidden; border-radius: 7px; }
+.media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 200ms ease; }
+.card-link:hover img { transform: scale(1.025); }
+.body { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0.2rem 0; }
+.body > div { flex: 1; min-width: 0; }
+h3 { margin: 0.25rem 0; font-size: 1.15rem; line-height: 1.2; }
+p { margin: 0; line-height: 1.4; color: #72736f; font-size: 0.85rem; }
+.home-post:not(.featured) h3,
+.home-post:not(.featured) p {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	overflow: hidden;
+}
+time { color: #85867e; font-size: 0.75rem; }
+.arrow-circle { display: grid; place-items: center; flex-shrink: 0; width: 34px; height: 34px; color: #dc671d; border: 1px solid #ebc9ab; border-radius: 50%; }
+.featured { grid-row: span 2; }
+.featured .card-link { position: relative; min-height: 23rem; overflow: hidden; border-radius: 12px; background: #111820; }
+.featured .media { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0; background: transparent; }
+.featured .media img { height: 100%; object-fit: cover; object-position: center; }
+.featured .card-link:hover img { transform: none; }
+.featured .body { position: relative; margin-top: auto; padding: 4.5rem 1.25rem 1.25rem; color: #fff; background: linear-gradient(to top, #0b1016f5 0%, #0b1016d9 48%, #0b101680 75%, transparent 100%); }
+.featured h3 { font-size: clamp(1.6rem, 2.3vw, 2.1rem); }
+.featured p, .featured time { color: #f1eee5; }
+.featured .arrow-circle { width: 46px; height: 46px; background: #ed812c; color: white; border-color: #ed812c; align-self: flex-end; }
+.card-link:focus-visible { outline: 2px solid #d36b23; outline-offset: 5px; }
+@media (prefers-reduced-motion: reduce) { .media img { transition: none; } }
+@media (max-width: 900px) { .featured { grid-row: auto; grid-column: 1 / -1; } .featured .card-link { min-height: 22rem; } }
+@media (max-width: 560px) { .featured .body { padding: 4rem 1rem 1rem; } .featured .card-link { min-height: 20rem; } }
+
 </style>

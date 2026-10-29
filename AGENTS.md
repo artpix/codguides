@@ -20,3 +20,9 @@ Consult these guides before working on related tasks:
 - [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
 - [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+
+## Icons
+
+Use only [Lucide](https://lucide.dev/icons/) for UI icons. Import named icon components from `@lucide/astro`; do not use icon fonts, Unicode symbols, emoji, custom SVG icons, or other icon libraries. Brand logos and illustrations are separate assets.
+
+Render icons as inline SVG with no client hydration. Use `currentColor`, a stroke width of 2, and sizes of 16, 20, or 24 px as appropriate. Mark decorative icons with `aria-hidden="true"`; give icon-only controls an accessible text label.

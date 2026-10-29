@@ -1,6 +1,8 @@
 ---
+import { Image } from 'astro:assets';
+import promo from '@/assets/promo.png';
 import type { Locale } from '@/i18n';
-import { getLocalizedPath, useTranslations } from '@/i18n';
+import { useTranslations } from '@/i18n';
 import Layout from '@/layouts/Layout.astro';
 import LatestPosts from '@/components/posts/LatestPosts.astro';
 import ToolsAndNews from '@/components/home/ToolsAndNews.astro';
@@ -24,23 +26,28 @@ try {
 ---
 
 <Layout title={t('site.title')} locale={locale}>
+		<section slot="hero" class="hero" aria-labelledby="home-title">
+			<Image class="promo-banner" src={promo} alt="" width={1400} widths={[480, 768, 1024, 1400, 2103]} sizes="100vw" format="webp" loading="eager" fetchpriority="high" />
+			<div class="site-container"><div class="hero-copy">
+				<h1 id="home-title">{t('home.title')}</h1>
+				<p>{t('home.description')}</p>
+			</div></div>
+		</section>
 	<div class="home-content">
-		<h1>{t('site.title')}</h1>
-		<p>{t('home.description')}</p>
-		<a href={getLocalizedPath(locale, 'posts')}>{t('home.openPosts')}</a>
 		<LatestPosts {posts} {locale} {loadError} />
 		<ToolsAndNews {locale} />
 	</div>
 </Layout>
 
 <style>
-	.home-content {
-		--home-columns: minmax(0, 2.3fr) minmax(0, 1fr) minmax(0, 1fr);
-		--home-gap: 1.5rem;
-	}
-	.home-content > :global(section) { margin-top: 3rem; }
 
-	a {
-		color: #5145cd;
-	}
+.home-content { --home-columns: minmax(0, 2.3fr) minmax(0, 1fr) minmax(0, 1fr); --home-gap: 1.25rem; }
+.hero { position: relative; isolation: isolate; min-height: 190px; padding-block: 2rem; display: flex; align-items: center; }
+.promo-banner { opacity: 0.8; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 75% 45%; z-index: -2; }
+.hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #f8f5ef 0%, #f8f5eff2 30%, #f8f5ef70 65%, #f8f5ef18 100%), linear-gradient(0deg, #f8f5ef 0%, #f8f5ef80 12%, transparent 50%); }
+.hero-copy { max-width: 900px; }
+h1 { font-size: clamp(1.65rem, 2.6vw, 2.5rem); line-height: 1.2; margin: 0 0 0.85rem; text-wrap: balance; }
+.hero p { max-width: 780px; margin: 0; color: #696b69; font-size: 1.1rem; line-height: 1.6; }
+@media (max-width: 640px) { .hero { min-height: 250px; } .hero::after { background: #f8f5efde; } }
+
 </style>

@@ -1,4 +1,7 @@
 ---
+import { ChevronDown } from '@lucide/astro';
+import { Image } from 'astro:assets';
+import logo from '@/assets/logo.webp';
 import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 import { getLocalizedPath, useTranslations, type Locale } from '@/i18n';
 
@@ -14,19 +17,91 @@ const t = useTranslations(locale);
 
 <header>
 	<div class="header-inner site-container">
-		<a class="brand" href={getLocalizedPath(locale)}>{t('site.title')}</a>
-		<nav aria-label={t('nav.main')}>
-			<a href={getLocalizedPath(locale)}>{t('nav.home')}</a>
-			<a href={getLocalizedPath(locale, 'posts')}>{t('home.allPosts')}</a>
+		<a class="brand" href={getLocalizedPath(locale)}>
+			<Image src={logo} alt={t('site.title')} width={200} widths={[200, 400]} sizes="(max-width: 480px) 175px, 200px" format="webp" loading="eager" />
+		</a>
+		<nav class="main-nav" aria-label={t('nav.main')}>
+			<a href={getLocalizedPath(locale)} aria-current={!path ? 'page' : undefined}>{t('nav.home')}</a>
+			<a href={getLocalizedPath(locale, 'posts')} aria-current={path.replace(/^\//, '').replace(/\/$/, '') === 'posts' ? 'page' : undefined}>{t('home.allPosts')}</a>
+			<details class="dropdown">
+				<summary>{t('nav.sections')}<ChevronDown class="dropdown-chevron" size={16} aria-hidden="true" /></summary>
+				<ul class="dropdown-panel">
+					<li><a href={getLocalizedPath(locale, 'posts')}>{t('home.allPosts')}</a></li>
+					<li><a href={`${getLocalizedPath(locale)}#tools`}>{t('home.toolsTitle')}</a></li>
+					<li><a href={`${getLocalizedPath(locale)}#news`}>{t('home.newsTitle')}</a></li>
+				</ul>
+			</details>
 		</nav>
-		<LanguageSwitcher {locale} {path} {localizedPaths} />
+		<div class="languages"><LanguageSwitcher {locale} {path} {localizedPaths} /></div>
 	</div>
 </header>
 
 <style>
-	header { border-bottom: 1px solid #d9dce3; }
-	.header-inner { padding-block: 1rem; display: flex; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
-	.brand { font-size: 1.5rem; font-weight: bold; }
-	nav { display: flex; flex-wrap: wrap; gap: 1rem; }
-	a { color: inherit; }
+	header {
+		color: #f3eee4;
+		background: radial-gradient(ellipse at 12% 0%, #b9853426, transparent 55%), linear-gradient(115deg, #111820, #0b1016);
+		border-bottom: 1px solid #ad813e;
+		box-shadow: 0 4px 20px #0b10161a;
+	}
+	.header-inner { padding-block: 0.75rem; display: flex; align-items: center; flex-wrap: wrap; gap: 1rem 2.5rem; }
+	.brand { display: block; flex-shrink: 0; max-width: 100%; }
+	.brand img { display: block; width: 200px; max-width: 100%; height: auto; }
+	.main-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+	.main-nav a, summary {
+		padding: 0.75rem 1rem;
+		border-radius: 0.5rem;
+		color: #d5d9df;
+		font-weight: 600;
+		text-decoration: none;
+		border: 1px solid transparent;
+	}
+	.main-nav a:hover { color: #ffe1a0; background: #ffffff08; }
+	.main-nav a[aria-current='page'] { color: #ffe1a0; background: #ffffff0a; }
+	.dropdown { position: relative; }
+	summary { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; list-style: none; }
+	summary::-webkit-details-marker { display: none; }
+	summary:hover, .dropdown[open] summary { color: #ffe1a0; background: #ffffff08; }
+	.dropdown[open] summary :global(.dropdown-chevron) { transform: rotate(180deg); }
+	.dropdown-panel {
+		position: absolute;
+		z-index: 10;
+		inset-block-start: calc(100% + 0.5rem);
+		inset-inline-end: 0;
+		width: max-content;
+		max-width: calc(100vw - 2 * var(--page-gutter));
+		list-style: none;
+		margin: 0;
+		padding: 0.5rem;
+		background: #141c26;
+		border: 1px solid #d5a44940;
+		border-radius: 0.75rem;
+		box-shadow: 0 16px 40px #00000040;
+	}
+	.dropdown-panel a { display: block; overflow-wrap: anywhere; }
+	.languages { margin-inline-start: auto; }
+	header a:focus-visible, summary:focus-visible { outline: 2px solid #f1c874; outline-offset: 4px; }
+	@media (max-width: 760px) {
+		.header-inner { gap: 0.75rem 1rem; }
+		.main-nav { order: 3; flex-basis: 100%; border-top: 1px solid #ffffff12; padding-top: 0.75rem; }
+	}
+	@media (max-width: 480px) {
+		.brand img { width: 175px; }
+		.languages { margin-inline-start: 0; }
+	}
 </style>
+
+<script>
+	document.addEventListener('click', (event) => {
+		if (!(event.target instanceof Node)) return;
+		for (const dropdown of document.querySelectorAll<HTMLDetailsElement>('.dropdown[open]')) {
+			if (!dropdown.contains(event.target) || (event.target instanceof Element && event.target.closest('a'))) dropdown.open = false;
+		}
+	});
+	document.addEventListener('keydown', (event) => {
+		if (event.key !== 'Escape') return;
+		for (const dropdown of document.querySelectorAll<HTMLDetailsElement>('.dropdown[open]')) {
+			if (dropdown.contains(document.activeElement)) dropdown.querySelector('summary')?.focus();
+			dropdown.open = false;
+		}
+	});
+</script>

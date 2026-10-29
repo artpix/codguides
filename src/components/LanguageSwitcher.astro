@@ -1,4 +1,5 @@
 ---
+import { Globe, ChevronDown, Check } from '@lucide/astro';
 import { getLocalizedPath, type Locale, locales, useTranslations } from '@/i18n';
 
 interface Props {
@@ -16,39 +17,39 @@ const languageNames: Record<Locale, string> = {
 };
 ---
 
-<nav aria-label={t('language.label')}>
-	<span>{t('language.label')}:</span>
-	{
-		locales.filter((item) => !localizedPaths || localizedPaths[item]).map((item) => (
-			<a
-				href={localizedPaths ? localizedPaths[item] : getLocalizedPath(item, path)}
-				hreflang={item}
-				lang={item}
-				aria-current={item === locale ? 'page' : undefined}
-			>
-				{languageNames[item]}
+<details class="dropdown language-picker">
+	<summary aria-label={`${t('language.label')}: ${languageNames[locale]}`}>
+		<Globe size={18} aria-hidden="true" />
+		<span class="current-language">{locale.toUpperCase()}</span>
+		<ChevronDown class="chevron" size={14} aria-hidden="true" />
+	</summary>
+	<nav aria-label={t('language.label')}>
+		<p class="menu-label">{t('language.label')}</p>
+		{locales.filter((item) => !localizedPaths || localizedPaths[item]).map((item) => (
+			<a href={localizedPaths ? localizedPaths[item] : getLocalizedPath(item, path)} hreflang={item} lang={item} aria-current={item === locale ? 'page' : undefined}>
+				<span class="language-code">{item.toUpperCase()}</span>
+				<span>{languageNames[item]}</span>
+				{item === locale && <Check size={16} aria-hidden="true" />}
 			</a>
-		))
-	}
-</nav>
+		))}
+	</nav>
+</details>
 
 <style>
-	nav {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.75rem;
-		font-size: 0.9rem;
-	}
-
-	a {
-		color: #5145cd;
-		text-decoration: none;
-	}
-
-	a[aria-current='page'] {
-		font-weight: 700;
-		text-decoration: underline;
-		text-underline-offset: 0.2rem;
-	}
+.language-picker { position: relative; font-size: 0.875rem; }
+summary { display: flex; align-items: center; gap: 0.65rem; min-height: 44px; padding: 0.6rem 0.8rem; border: 1px solid #ffffff26; border-radius: 0.65rem; color: #e8e4dc; background: #ffffff05; cursor: pointer; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary:hover, .language-picker[open] summary { background: #ffffff0c; border-color: #c99d5b70; }
+.current-language { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; }
+.language-picker[open] :global(.chevron) { transform: rotate(180deg); }
+nav { position: absolute; z-index: 20; inset-inline-end: 0; top: calc(100% + 0.65rem); width: 224px; max-width: calc(100vw - 40px); padding: 0.5rem; border: 1px solid #c99d5b40; border-radius: 0.85rem; background: #141c26; box-shadow: 0 16px 40px #00000050; }
+.menu-label { margin: 0; padding: 0.4rem 0.6rem 0.6rem; color: #959fac; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
+a { display: flex; align-items: center; gap: 0.7rem; min-height: 48px; padding: 0.5rem 0.6rem; border-radius: 0.5rem; color: #d5d9df; text-decoration: none; }
+a > span:nth-child(2) { flex: 1; }
+.language-code { display: grid; place-items: center; width: 30px; height: 28px; border: 1px solid #ffffff18; border-radius: 0.35rem; font-size: 0.65rem; color: #a8b1bd; }
+a:hover { background: #ffffff08; color: #fff; }
+a[aria-current='page'] { background: #d5a44910; color: #f1ce8b; }
+a[aria-current='page'] .language-code { border-color: #d5a44940; color: #f1ce8b; }
+a:focus-visible, summary:focus-visible { outline: 2px solid #f1c874; outline-offset: 3px; }
+@media (max-width: 480px) { nav { inset-inline-start: 0; inset-inline-end: auto; } }
 </style>
