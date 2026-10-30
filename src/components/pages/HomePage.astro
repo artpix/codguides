@@ -30,7 +30,7 @@ try {
 			<Image class="promo-banner" src={promo} alt="" width={1400} widths={[480, 768, 1024, 1400, 2103]} sizes="100vw" format="webp" loading="eager" fetchpriority="high" />
 			<div class="site-container"><div class="hero-copy">
 				<h1 id="home-title">{t('home.title')}</h1>
-				<p>{t('home.description')}</p>
+				<p>{t('home.description').split('Call of Dragons').map((part, index) => <>{index > 0 && <strong>Call of Dragons</strong>}{part}</>)}</p>
 			</div></div>
 		</section>
 	<div class="home-content">
@@ -45,8 +45,8 @@ try {
 .hero { position: relative; isolation: isolate; min-height: 190px; padding-block: 2rem; display: flex; align-items: center; }
 .promo-banner { opacity: 0.8; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 75% 45%; z-index: -2; }
 .hero::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #f8f5ef 0%, #f8f5eff2 30%, #f8f5ef70 65%, #f8f5ef18 100%), linear-gradient(0deg, #f8f5ef 0%, #f8f5ef80 12%, transparent 50%); }
-.hero-copy { max-width: 900px; }
-h1 { font-size: clamp(1.65rem, 2.6vw, 2.5rem); line-height: 1.2; margin: 0 0 0.85rem; text-wrap: balance; }
+.hero-copy { width: 100%; }
+h1 { font-size: clamp(0.6rem, 2.4vw, 2.25rem); line-height: 1.2; margin: 0 0 0.85rem; white-space: nowrap; }
 .hero p { max-width: 780px; margin: 0; color: #696b69; font-size: 1.1rem; line-height: 1.6; }
 @media (max-width: 640px) { .hero { min-height: 250px; } .hero::after { background: #f8f5efde; } }
 

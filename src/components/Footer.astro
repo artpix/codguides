@@ -1,5 +1,5 @@
 ---
-import { getLocalizedPath, useTranslations, type Locale } from '@/i18n';
+import { useTranslations, type Locale } from '@/i18n';
 
 interface Props {
 	locale: Locale;
@@ -14,8 +14,8 @@ const year = new Date().getUTCFullYear();
 	<div class="footer-inner site-container">
 		<p>© {year} {t('site.title')}</p>
 		<nav aria-label={t('nav.footer')}>
-			<a href={getLocalizedPath(locale)}>{t('nav.home')}</a>
-			<a href={getLocalizedPath(locale, 'posts')}>{t('home.allPosts')}</a>
+			<a href="https://codguides.com/privacy-policy">{t('footer.privacy')}</a>
+			<a href="https://codguides.com/contacts">{t('footer.contacts')}</a>
 		</nav>
 	</div>
 </footer>

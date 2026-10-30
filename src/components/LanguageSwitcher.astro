@@ -37,16 +37,16 @@ const languageNames: Record<Locale, string> = {
 
 <style>
 .language-picker { position: relative; font-size: 0.875rem; }
-summary { display: flex; align-items: center; gap: 0.65rem; min-height: 44px; padding: 0.6rem 0.8rem; border: 1px solid #ffffff26; border-radius: 0.65rem; color: #e8e4dc; background: #ffffff05; cursor: pointer; list-style: none; }
+summary { display: flex; align-items: center; gap: 0.65rem; min-height: 44px; padding: 0.6rem 0.8rem; border: 1px solid #ffffff26; border-radius: 0.3rem; color: #e8e4dc; background: #ffffff05; cursor: pointer; list-style: none; }
 summary::-webkit-details-marker { display: none; }
 summary:hover, .language-picker[open] summary { background: #ffffff0c; border-color: #c99d5b70; }
 .current-language { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; }
 .language-picker[open] :global(.chevron) { transform: rotate(180deg); }
-nav { position: absolute; z-index: 20; inset-inline-end: 0; top: calc(100% + 0.65rem); width: 224px; max-width: calc(100vw - 40px); padding: 0.5rem; border: 1px solid #c99d5b40; border-radius: 0.85rem; background: #141c26; box-shadow: 0 16px 40px #00000050; }
+nav { position: absolute; z-index: 20; inset-inline-end: 0; top: calc(100% + 0.65rem); width: 224px; max-width: calc(100vw - 40px); padding: 0.5rem; border: 1px solid #c99d5b40; border-radius: 0.4rem; background: #141c26; box-shadow: 0 16px 40px #00000050; }
 .menu-label { margin: 0; padding: 0.4rem 0.6rem 0.6rem; color: #959fac; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
-a { display: flex; align-items: center; gap: 0.7rem; min-height: 48px; padding: 0.5rem 0.6rem; border-radius: 0.5rem; color: #d5d9df; text-decoration: none; }
+a { display: flex; align-items: center; gap: 0.7rem; min-height: 48px; padding: 0.5rem 0.6rem; border-radius: 0.25rem; color: #d5d9df; text-decoration: none; }
 a > span:nth-child(2) { flex: 1; }
-.language-code { display: grid; place-items: center; width: 30px; height: 28px; border: 1px solid #ffffff18; border-radius: 0.35rem; font-size: 0.65rem; color: #a8b1bd; }
+.language-code { display: grid; place-items: center; width: 30px; height: 28px; border: 1px solid #ffffff18; border-radius: 0.2rem; font-size: 0.65rem; color: #a8b1bd; }
 a:hover { background: #ffffff08; color: #fff; }
 a[aria-current='page'] { background: #d5a44910; color: #f1ce8b; }
 a[aria-current='page'] .language-code { border-color: #d5a44940; color: #f1ce8b; }

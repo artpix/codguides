@@ -5,9 +5,6 @@ import speedups from '@/assets/calculators/speedups.webp';
 import resources from '@/assets/calculators/resources.webp';
 import troops from '@/assets/calculators/troops.webp';
 import { useTranslations, type Locale } from '@/i18n';
-import { getNewsPosts } from '@/lib/pocketbase/posts';
-import { getPostPath } from '@/lib/paths';
-import type { LocalizedPost } from '@/types/pocketbase';
 
 interface Props {
 	locale: Locale;
@@ -17,17 +14,6 @@ const { locale } = Astro.props;
 const t = useTranslations(locale);
 const tools = ['speedups', 'resources', 'troops'] as const;
 const toolImages = { speedups, resources, troops };
-let news: LocalizedPost[] = [];
-let newsError = false;
-try {
-	news = await getNewsPosts(locale);
-} catch (error) {
-	newsError = true;
-	console.warn('Failed to load news:', error instanceof Error ? error.message : error);
-}
-const dateFormatter = new Intl.DateTimeFormat(locale, {
-	day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC',
-});
 ---
 
 <div class="tools-and-news">
@@ -35,7 +21,7 @@ const dateFormatter = new Intl.DateTimeFormat(locale, {
 		<h2 id="tools-title">{t('home.toolsTitle')}</h2>
 		<div class="tools-grid">
 			{tools.map((tool) => (
-				<article>
+				<article id={`calculator-${tool}`}>
 					<div class="tool-art"><Image class="tool-image" src={toolImages[tool]} alt="" width={104} widths={[104, 208]} sizes="104px" format="webp" loading="lazy" /></div>
 					<div>
 					<h3>{t(`home.tools.${tool}.title`)}</h3>
@@ -46,35 +32,18 @@ const dateFormatter = new Intl.DateTimeFormat(locale, {
 			))}
 		</div>
 	</section>
-	<section id="news" aria-labelledby="news-title">
-		<h2 id="news-title">{t('home.newsTitle')}</h2>
-		{newsError ? <p role="status">{t('posts.loadError')}</p> : news.length ? (
-			<ul class="news-list">
-				{news.map((post) => {
-					const date = new Date(post.date_created);
-					return (
-						<li>
-							{!Number.isNaN(date.getTime()) && <time datetime={date.toISOString()}>{dateFormatter.format(date)}</time>}
-							<a href={getPostPath(locale, post.translation.slug)}>{post.translation.title}</a>
-						</li>
-					);
-				})}
-			</ul>
-		) : <p>{t('home.noNews')}</p>}
-	</section>
 </div>
 
 <style>
 
-.tools-and-news { display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr); gap: 1.75rem; margin-top: 2.25rem; }
+.tools-and-news { display: grid; gap: 2.25rem; margin-top: 2.25rem; }
 section { min-width: 0; scroll-margin-top: 1.5rem; }
-section:last-child { border-inline-start: 1px solid #dedbd3; padding-inline-start: 1.75rem; }
 h2 { margin: 0 0 1rem; font-size: clamp(1.6rem, 2.5vw, 2rem); }
 .tools-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
-article { display: flex; align-items: flex-start; gap: 0.5rem; min-height: 108px; padding: 0.6rem; background: linear-gradient(120deg, #f4e9da, #f5eee4); border: 1px solid #e8dccc80; border-radius: 12px; }
+article { scroll-margin-top: 1.5rem; display: flex; align-items: flex-start; gap: 0.5rem; min-height: 108px; padding: 0.9rem; background: linear-gradient(120deg, #f4e9da, #f5eee4); border: 1px solid #e8dccc80; border-radius: 6px; }
 article > div { min-width: 0; }
 article > div:last-child { flex: 1; }
-.tool-arrow { display: grid; place-items: center; width: 30px; height: 30px; margin: 0.5rem 0 0 auto; border: 1px solid #e4bc9666; border-radius: 50%; color: #c95713; background: #ffffff40; }
+.tool-arrow { display: grid; place-items: center; width: 30px; height: 30px; margin: 0.5rem 0 0 auto; border: 1px solid #e4bc9666; border-radius: 6px; color: #c95713; background: #ffffff40; }
 article:nth-child(2) { background: linear-gradient(120deg, #e8ebef, #f0f1f2); border-color: #dce0e680; }
 article:nth-child(3) { background: linear-gradient(120deg, #f1e5d7, #f6ede5); }
 .tool-art { display: grid; place-items: center; width: 76px; height: 76px; flex: 0 0 76px; }
@@ -84,13 +53,6 @@ p { margin: 0; line-height: 1.5; color: #73716b; font-size: 0.78rem; }
 article h3, article p { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
 article h3 { -webkit-line-clamp: 2; line-clamp: 2; }
 article p { -webkit-line-clamp: 3; line-clamp: 3; }
-.news-list { display: grid; gap: 1rem; list-style: none; margin: 0; padding: 0; }
-.news-list li { display: grid; gap: 0.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e6e1d7; }
-.news-list a { color: inherit; line-height: 1.4; text-decoration: none; font-size: 0.9rem; }
-.news-list a:hover { color: #c95713; }
-time { font-size: 0.7rem; color: #85867e; }
-@media (max-width: 900px) { .tools-and-news { grid-template-columns: 1fr; } section:last-child { border-inline-start: 0; padding-inline-start: 0; } }
-@media (min-width: 901px) and (max-width: 1150px) { .tools-grid { grid-template-columns: 1fr; } article { min-height: 108px; } }
-@media (max-width: 640px) { .tools-grid { grid-template-columns: 1fr; } article { flex-direction: row; } }
+@media (max-width: 900px) { .tools-grid { grid-template-columns: 1fr; } }
 
 </style>
